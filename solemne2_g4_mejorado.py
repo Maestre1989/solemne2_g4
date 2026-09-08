@@ -13,9 +13,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import streamlit as st
 
-# -----------------------------
+# *******************************
 # Configuración del proyecto
-# -----------------------------
+# *********************************
 RESOURCE_ID = "4a493e53-ecd7-477a-ab8b-9d3bcd542e07"
 LIMIT = 14000
 URL_API = f"https://datos.gob.cl/api/3/action/datastore_search?resource_id={RESOURCE_ID}&limit={LIMIT}"
@@ -34,9 +34,9 @@ with st.expander("ℹ️ Sobre el dataset"):
     st.write(f"**Resource ID:** {RESOURCE_ID}")
 
 
-# -----------------------------
+# **********************************
 # Función para pedir los datos a la API (GET + JSON)
-# -----------------------------
+# **********************************
 @st.cache_data
 def cargar_datos():
     try:
@@ -61,18 +61,16 @@ df = cargar_datos()
 if df.empty:
     st.warning("No se pudieron cargar los datos. Revisa tu conexión a internet.")
     st.stop()
-
-# Quitamos la columna técnica que trae la API por defecto
 if "_id" in df.columns:
     df = df.drop(columns=["_id"])
 
 
-# -----------------------------
+# **********************************
 # Las columnas de este dataset vienen en MAYÚSCULAS:
 # ANO, REGION, SERVICIO, PROVINCIA, COMUNA, BIP, NOMBRE, y una columna de monto.
 # Buscamos cada columna sin importar mayúsculas/minúsculas para que
 # el código no falle si la API cambia el formato del nombre.
-# -----------------------------
+# **********************************
 def buscar_columna(nombre):
     for c in df.columns:
         if c.strip().upper() == nombre.upper():
@@ -108,10 +106,9 @@ if col_monto:
 if col_anio:
     df[col_anio] = df[col_anio].astype(str)
 
-
-# -----------------------------
+# **********************************
 # Filtros en la barra lateral
-# -----------------------------
+# **********************************
 st.sidebar.header("🎛️ Filtros")
 
 df_filtrado = df.copy()
@@ -140,10 +137,9 @@ if busqueda and col_nombre:
         df_filtrado[col_nombre].astype(str).str.contains(busqueda, case=False, na=False)
     ]
 
-
-# -----------------------------
+# **********************************
 # KPIs (métricas rápidas)
-# -----------------------------
+# **********************************
 st.markdown("---")
 col1, col2, col3 = st.columns(3)
 
@@ -163,9 +159,9 @@ else:
 st.markdown("---")
 
 
-# -----------------------------
+# **********************************
 # Tabla de datos + descarga CSV
-# -----------------------------
+# **********************************
 st.subheader("📋 Datos de inversión")
 st.dataframe(df_filtrado, use_container_width=True)
 
@@ -173,9 +169,9 @@ csv = df_filtrado.to_csv(index=False).encode("utf-8")
 st.download_button("📥 Descargar CSV", data=csv, file_name="inversion_mop.csv", mime="text/csv")
 
 
-# -----------------------------
+# **********************************
 # Gráfico 1: evolución de la inversión por año
-# -----------------------------
+# **********************************
 st.markdown("---")
 st.subheader("📈 Evolución de la inversión por año")
 
@@ -191,10 +187,9 @@ if col_anio and col_monto and not df_filtrado.empty:
 else:
     st.info("No hay suficientes datos para este gráfico.")
 
-
-# -----------------------------
+# **********************************
 # Gráfico 2: inversión por región
-# -----------------------------
+# **********************************
 st.markdown("---")
 st.subheader("🌎 Inversión por región")
 
@@ -209,10 +204,9 @@ if col_region and col_monto and not df_filtrado.empty:
 else:
     st.info("No hay suficientes datos para este gráfico.")
 
-
-# -----------------------------
+# **********************************
 # Conclusiones
-# -----------------------------
+# **********************************
 st.markdown("---")
 st.subheader("📝 Conclusiones")
 
@@ -238,4 +232,6 @@ else:
 st.markdown("---")
 st.caption("Solemne II - Grupo 4 - Análisis de Datos Abiertos (MOP) - datos.gob.cl")
 
+#***********************************
 # Para ejecutar: python -m streamlit run solemne2_g4_mejorado.py
+#***********************************
